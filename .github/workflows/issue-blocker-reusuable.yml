@@ -1,9 +1,10 @@
 # .github/workflows/issue-blocker.yml
 
-name: "Auto Manage Blockers"
+name: "Reusable Issue Blocker Workflow"
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   issues: write
@@ -20,14 +21,14 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const regex = /#(\d+)/g;
-
+            
             const issues = await github.rest.issues.listForRepo({ owner, repo, state: 'open' });
-
+            
             for (const issue of issues.data) {
               if (issue.pull_request) continue;
 
               console.log(`\n🔍 Issue #${issue.number}: ${issue.title}`);
-
+              
               const comments = await github.rest.issues.listComments({ owner, repo, issue_number: issue.number });
               let updated = false;
 
